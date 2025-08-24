@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Outreach Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+        
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+        }
+        
+        .btn-warning:hover {
+            box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
+        }
+        
+        .file-upload {
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            background: white;
+            transition: border-color 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: #3498db;
+        }
+        
+        .file-upload input[type="file"] {
+            display: none;
+        }
+        
+        .file-upload-label {
+            cursor: pointer;
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+        
+        .results {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #3498db;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-sent { background: #27ae60; }
+        .status-failed { background: #e74c3c; }
+        .status-error { background: #f39c12; }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Email Outreach Manager</h1>
+            <p>Automated AI-Powered Email Campaigns for Law Firms & Real Estate Agents</p>
+        </div>
+        
+        <div class="content">
+            <!-- SMTP Configuration Section -->
+            <div class="section">
+                <h2>📧 Email Configuration</h2>
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="smtp-server">SMTP Server</label>
+                        <input type="text" id="smtp-server" placeholder="smtp.gmail.com" value="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="smtp-port">SMTP Port</label>
+                        <input type="number" id="smtp-port" placeholder="587" value="587">
+                    </div>
+                    <div class="form-group">
+                        <label for="from-email">From Email</label>
+                        <input type="email" id="from-email" placeholder="your-email@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="email-password">Email Password / App Password</label>
+                        <input type="password" id="email-password" placeholder="Your email password">
+                    </div>
+                </div>
+                <button class="btn btn-warning" onclick="testSMTP()">Test Email Configuration</button>
+            </div>
+            
+            <!-- Leads Upload Section -->
+            <div class="section">
+                <h2>📋 Upload Leads</h2>
+                <div class="file-upload">
+                    <input type="file" id="leads-file" accept=".csv" onchange="handleFileUpload(event)">
+                    <label for="leads-file" class="file-upload-label">
+                        📁 Click to upload CSV file with leads<br>
+                        <small>Format: name, email, company, industry, location, phone, contacted</small>
+                    </label>
+                </div>
+                <div id="leads-preview"></div>
+            </div>
+            
+            <!-- Campaign Management Section -->
+            <div class="section">
+                <h2>🎯 Campaign Management</h2>
+                <div class="grid">
+                    <div>
+                        <button class="btn btn-success" onclick="startCampaign()" id="start-campaign-btn" disabled>
+                            🚀 Start Email Campaign
+                        </button>
+                        <button class="btn" onclick="previewEmails()">
+                            👁️ Preview Emails
+                        </button>
+                    </div>
+                    <div>
+                        <p><strong>Loaded Leads:</strong> <span id="leads-count">0</span></p>
+                        <p><strong>Uncontacted:</strong> <span id="uncontacted-count">0</span></p>
+                    </div>
+                </div>
+                
+                <div class="loading" id="campaign-loading">
+                    <div class="spinner"></div>
+                    <p>Sending emails... Please wait.</p>
+                </div>
+                
+                <div id="campaign-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLeads = [];
+        
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/api/upload-leads', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                currentLeads = data.leads;
+                updateLeadsDisplay();
+                document.getElementById('start-campaign-btn').disabled = false;
+            })
+            .catch(error => {
+                alert('Error uploading file: ' + error);
+            });
+        }
+        
+        function updateLeadsDisplay() {
+            const totalCount = currentLeads.length;
+            const uncontactedCount = currentLeads.filter(lead => !lead.contacted).length;
+            
+            document.getElementById('leads-count').textContent = totalCount;
+            document.getElementById('uncontacted-count').textContent = uncontactedCount;
+            
+            const preview = document.getElementById('leads-preview');
+            if (totalCount > 0) {
+                preview.innerHTML = `
+                    <div class="results">
+                        <h3>✅ Successfully loaded ${totalCount} leads</h3>
+                        <p>${uncontactedCount} leads ready for outreach</p>
+                        <p>Industries: ${[...new Set(currentLeads.map(l => l.industry))].join(', ')}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function testSMTP() {
+            const smtpConfig = getSMTPConfig();
+            if (!smtpConfig.from_email || !smtpConfig.password) {
+                alert('Please fill in email and password fields');
+                return;
+            }
+            
+            fetch('/api/test-smtp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ smtp_config: smtpConfig })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('SMTP Test Failed: ' + data.error);
+                } else {
+                    alert('✅ SMTP Configuration is valid!');
+                }
+            })
+            .catch(error => {
+                alert('Error testing SMTP: ' + error);
+            });
+        }
+        
+        function getSMTPConfig() {
+            return {
+                smtp_server: document.getElementById('smtp-server').value,
+                smtp_port: parseInt(document.getElementById('smtp-port').value),
+                from_email: document.getElementById('from-email').value,
+                username: document.getElementById('from-email').value,
+                password: document.getElementById('email-password').value
+            };
+        }
+        
+        function startCampaign() {
+            if (currentLeads.length === 0) {
+                alert('Please upload leads first');
+                return;
+            }
+            
+            const smtpConfig = getSMTPConfig();
+            if (!smtpConfig.from_email || !smtpConfig.password) {
+                alert('Please configure email settings first');
+                return;
+            }
+            
+            if (!confirm(`Start email campaign for ${currentLeads.filter(l => !l.contacted).length} uncontacted leads?`)) {
+                return;
+            }
+            
+            document.getElementById('campaign-loading').style.display = 'block';
+            document.getElementById('start-campaign-btn').disabled = true;
+            
+            fetch('/api/send-emails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    leads: currentLeads,
+                    smtp_config: smtpConfig
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('campaign-loading').style.display = 'none';
+                document.getElementById('start-campaign-btn').disabled = false;
+                
+                if (data.error) {
+                    alert('Campaign Error: ' + data.error);
+                    return;
+                }
+                
+                displayCampaignResults(data.results);
+            })
+            .catch(error => {
+                document.getElementById('campaign-loading').style.display = 'none';
+                document.getElementById('start-campaign-btn').disabled = false;
+                alert('Error running campaign: ' + error);
+            });
+        }
+        
+        function displayCampaignResults(results) {
+            const resultsDiv = document.getElementById('campaign-results');
+            const sentCount = results.filter(r => r.status === 'sent').length;
+            const failedCount = results.filter(r => r.status === 'failed').length;
+            const errorCount = results.filter(r => r.status === 'error').length;
+            
+            let html = `
+                <div class="results">
+                    <h3>📊 Campaign Results</h3>
+                    <p><span class="status-indicator status-sent"></span>Sent: ${sentCount}</p>
+                    <p><span class="status-indicator status-failed"></span>Failed: ${failedCount}</p>
+                    <p><span class="status-indicator status-error"></span>Errors: ${errorCount}</p>
+                    <hr style="margin: 20px 0;">
+                    <h4>Detailed Results:</h4>
+            `;
+            
+            results.forEach(result => {
+                const statusClass = `status-${result.status}`;
+                html += `
+                    <p>
+                        <span class="status-indicator ${statusClass}"></span>
+                        ${result.name} (${result.email}) - ${result.status.toUpperCase()}
+                        ${result.error ? ` - ${result.error}` : ''}
+                    </p>
+                `;
+            });
+            
+            html += '</div>';
+            resultsDiv.innerHTML = html;
+        }
+        
+        function previewEmails() {
+            if (currentLeads.length === 0) {
+                alert('Please upload leads first');
+                return;
+            }
+            
+            const sampleLead = currentLeads.find(l => !l.contacted) || currentLeads[0];
+            
+            fetch('/api/preview-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ lead: sampleLead })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                
+                const popup = window.open('', '_blank', 'width=600,height=800');
+                popup.document.write(`
+                    <html>
+                        <head><title>Email Preview</title></head>
+                        <body style="font-family: Arial, sans-serif; padding: 20px;">
+                            <h2>Email Preview for ${sampleLead.name}</h2>
+                            <hr>
+                            <pre style="white-space: pre-wrap; font-family: Arial, sans-serif;">${data.email_content}</pre>
+                        </body>
+                    </html>
+                `);
+            })
+            .catch(error => {
+                alert('Error previewing email: ' + error);
+            });
+        }
+    </script>
+</body>
+</html>
